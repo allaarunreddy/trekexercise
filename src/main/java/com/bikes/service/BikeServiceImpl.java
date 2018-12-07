@@ -14,6 +14,8 @@ import org.json.JSONArray;
 import com.bikes.util.BikeRestUtil;
 
 public class BikeServiceImpl implements BikeService {
+	
+	//Method to get the top bikes after parsing the json
 
 	public void getTop20Bikes(String jsonUrl) {
 		try {
