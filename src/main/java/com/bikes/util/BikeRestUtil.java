@@ -7,6 +7,9 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class BikeRestUtil {
+	
+	//Method to get the top bikes after parsing the json and output to string for sorting
+	
 	public static String getTopTwenttyBikes(String fromUrl) throws IOException {
 		StringBuilder content = new StringBuilder();
 		try {
