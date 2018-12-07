@@ -15,8 +15,8 @@ import com.bikes.util.BikeRestUtil;
 
 public class BikeServiceImpl implements BikeService {
 	
-	//Method to get the top bikes after parsing the json and output to string for sorting
-
+	//Method to call the service 
+	
 	public void getTop20Bikes(String jsonUrl) {
 		try {
 			String jsonResponse = BikeRestUtil.getTopTwenttyBikes(jsonUrl);
