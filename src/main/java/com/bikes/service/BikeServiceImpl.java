@@ -15,7 +15,7 @@ import com.bikes.util.BikeRestUtil;
 
 public class BikeServiceImpl implements BikeService {
 	
-	//Method to get the top bikes after parsing the json
+	//Method to get the top bikes after parsing the json and output to string for sorting
 
 	public void getTop20Bikes(String jsonUrl) {
 		try {
@@ -25,7 +25,9 @@ public class BikeServiceImpl implements BikeService {
 			e.printStackTrace();
 		}
 	}
-
+	
+	// To parse jsonObject and manage the bike entries
+	
 	private void parseBikeJson(String jsonString) throws IOException {
 		JSONArray bikeList = new JSONArray(jsonString);
 		Map<String, Integer> bikeCount = new HashMap<String, Integer>();
@@ -49,7 +51,9 @@ public class BikeServiceImpl implements BikeService {
 			i++;
 		}
 	}
-
+	
+	//Method to sort the values.
+	
 	public static HashMap<String, Integer> sortByValue(Map<String, Integer> bikeCount) {
 		List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>(bikeCount.entrySet());
 		Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
