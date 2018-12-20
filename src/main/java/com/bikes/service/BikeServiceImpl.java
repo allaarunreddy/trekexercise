@@ -1,6 +1,7 @@
 package com.bikes.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -10,13 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.bikes.util.BikeRestUtil;
 
 public class BikeServiceImpl implements BikeService {
-	
-	//Method to call the service 
-	
+
 	public void getTop20Bikes(String jsonUrl) {
 		try {
 			String jsonResponse = BikeRestUtil.getTopTwenttyBikes(jsonUrl);
@@ -25,39 +25,91 @@ public class BikeServiceImpl implements BikeService {
 			e.printStackTrace();
 		}
 	}
-	
-	// To parse jsonObject and manage the bike entries
-	
+
 	private void parseBikeJson(String jsonString) throws IOException {
 		JSONArray bikeList = new JSONArray(jsonString);
-		Map<String, Integer> bikeCount = new HashMap<String, Integer>();
+		Map<String, Integer> bikeCombinaitions = new HashMap<String, Integer>();
 		Integer value = null;
+		int count = 0;
+		ArrayList<ArrayList<String>> bikes = new ArrayList<ArrayList<String>>();
+
 		for (int i = 0; i < bikeList.length(); i++) {
-			value = bikeCount.get(bikeList.getJSONObject(i).getJSONArray("bikes").getString(0));
+			JSONArray jsonArray = bikeList.getJSONObject(i).getJSONArray(
+					"bikes");
+
+			if (jsonArray.length() > 1) {
+				count++;
+				ArrayList<String> group1 = new ArrayList<String>();
+				for (Object obj : jsonArray) {
+					String jObj = (String) obj;
+					group1.add(jObj);
+				}
+
+				bikes.add(group1);
+
+			}
+		}
+
+		int k = 2;
+		for (ArrayList<String> group : bikes) {
+			Collections.sort(group);
+			recurse(group, "", 0, group.size(), k, bikeCombinaitions);
+		}
+		System.out.println("--------------------------------------------");
+
+		HashMap<String, Integer> desendingOrderMap = sortByValue(bikeCombinaitions);
+		int i = 0;
+		for (Map.Entry<String, Integer> entry : desendingOrderMap.entrySet()) {
+
+			
+			System.out.println(entry.getKey() + " combination " + ++i
+					+ " & entries " + entry.getValue());
+
+		}
+	}
+
+	public static void recurse(ArrayList<String> group, String out, int i,
+			int n, int k, Map<String, Integer> bikeCount) {
+		Integer value = null;
+		// invalid input
+		if (k > n) {
+			return;
+		}
+
+		// base case: combination size is k
+		if (k == 0) {
+			System.out.println(out);
+			value = bikeCount.get(out);
 			if (value != null) {
 				value = value + 1;
 			} else {
 				value = 1;
 			}
-			bikeCount.put(bikeList.getJSONObject(i).getJSONArray("bikes").getString(0), value);
+			bikeCount.put(out, value);
+			return;
 		}
 
-		HashMap<String, Integer> desendingOrderMap = sortByValue(bikeCount);
-		int i = 0;
-		for (Map.Entry<String, Integer> entry : desendingOrderMap.entrySet()) {
-			if (i < 20) {
-				System.out.println(entry.getKey() + " - " + entry.getValue() + " entries ");
+		// start from next index till last index
+		for (int j = i; j < n; j++) {
+			// add current element A[j] to solution & recurse for next index
+			// (j+1) with one less element (k-1)
+			recurse(group, out + "," + (group.get(j)), j + 1, n, k - 1,
+					bikeCount);
+
+			// uncomment below code to handle duplicates
+			while (j < n - 1 && group.get(j) == group.get(j + 1)) {
+				j++;
 			}
-			i++;
 		}
 	}
-	
-	//Method to sort the values.
-	
-	public static HashMap<String, Integer> sortByValue(Map<String, Integer> bikeCount) {
-		List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>(bikeCount.entrySet());
+
+	public static HashMap<String, Integer> sortByValue(
+			Map<String, Integer> bikeCount) {
+		List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>(
+				bikeCount.entrySet());
 		Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
-			public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+			public int compare(Map.Entry<String, Integer> o1,
+					Map.Entry<String, Integer> o2) {
 				return (o2.getValue()).compareTo(o1.getValue());
 			}
 		});
