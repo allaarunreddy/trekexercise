@@ -61,9 +61,10 @@ public class BikeServiceImpl implements BikeService {
 		int i = 0;
 		for (Map.Entry<String, Integer> entry : desendingOrderMap.entrySet()) {
 
-			
+			if(i<5){
 			System.out.println(entry.getKey() + " combination " + ++i
 					+ " & entries " + entry.getValue());
+			}
 
 		}
 	}
